@@ -1,0 +1,6 @@
+{
+    "dev.containers.dockerPath": "podman",
+    "dev.containers.dockerSocketPath": "ssh://core@127.0.0.1:58197/run/user/501/podman/podman.sock",
+    "dev.containers.dockerComposePath": "podman-compose",
+    "files.autoSave": "afterDelay"
+}

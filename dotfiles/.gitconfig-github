@@ -1,0 +1,14 @@
+[user]
+	name = arewm
+	email = arewm@users.noreply.github.com
+	signingKey = 70230E62379CE07F
+[core]
+	editor = /usr/local/bin/vim
+[commit]
+	gpgsign = true
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+[gpg]
+	program = gpg
+[rh-pre-commit "commit-msg"]
+    signOff = true

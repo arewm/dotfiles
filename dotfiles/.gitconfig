@@ -1,0 +1,21 @@
+; includes for "Git Hub" and public type repos
+[includeIf "gitdir:~/workspace/src/github.com/**"]
+    path = ~/.gitconfig-github
+; includes for "Red Hat" and private type repos
+[includeIf "gitdir:~/workspace/src/gitlab.cee.redhat.com/**"]
+    path = ~/.gitconfig-gitlab
+[includeIf "gitdir:~/workspace/src/gitlab.com/**"]
+    path = ~/.gitconfig-gitlab
+[core]
+	editor = $(which vim)
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+[gpg]
+	program = gpg
+[init]
+	templateDir = ~/.git-template
+[rh-pre-commit]
+	checkSecrets = true
+	enableLocalConfig = false
+[rh-pre-commit "commit-msg"]
+	signOff = false

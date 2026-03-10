@@ -1,0 +1,76 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# Default base directory for cloning repositories
+BASE_DIR="${GIT_SCLONE_BASE:-$HOME/workspace/src}"
+
+if [ -z "${1:-}" ]; then
+    echo "Usage: git sclone <repository-url>"
+    echo "Example: git sclone https://github.com/lcarva/festoji"
+    echo ""
+    echo "Set GIT_SCLONE_BASE to change the base directory (default: ~/workspace/src)"
+    exit 1
+fi
+
+REPO_URL="$1"
+
+# Parse the repository URL to extract host, owner, and repo name
+if [[ "$REPO_URL" =~ ^https?://([^/]+)/([^/]+)/([^/]+)$ ]]; then
+    HOST="${BASH_REMATCH[1]}"
+    OWNER="${BASH_REMATCH[2]}"
+    REPO="${BASH_REMATCH[3]}"
+elif [[ "$REPO_URL" =~ ^git@([^:]+):([^/]+)/([^/]+)$ ]]; then
+    HOST="${BASH_REMATCH[1]}"
+    OWNER="${BASH_REMATCH[2]}"
+    REPO="${BASH_REMATCH[3]}"
+else
+    echo "Error: Could not parse repository URL: $REPO_URL" >&2
+    echo "Supported formats:" >&2
+    echo "  - https://github.com/owner/repo" >&2
+    echo "  - git@github.com:owner/repo" >&2
+    exit 1
+fi
+
+REPO="${REPO%.git}"
+TARGET_DIR="$BASE_DIR/$HOST/$OWNER/$REPO"
+
+# If already cloned, just output the path
+if [ -d "$TARGET_DIR" ]; then
+    echo "Already cloned: $TARGET_DIR" >&2
+    echo "$TARGET_DIR"
+    exit 0
+fi
+
+mkdir -p "$(dirname "$TARGET_DIR")"
+
+echo "Cloning $REPO_URL to $TARGET_DIR..." >&2
+git clone "$REPO_URL" "$TARGET_DIR"
+
+# Detect if this is a fork and add an upstream remote
+setup_upstream() {
+    local upstream_url="$1"
+    echo "Fork detected, adding upstream remote: $upstream_url" >&2
+    git -C "$TARGET_DIR" remote add upstream "$upstream_url"
+    git -C "$TARGET_DIR" fetch upstream >&2
+}
+
+if [[ "$HOST" == "github.com" ]] && command -v gh &>/dev/null; then
+    fork_parent=$(gh api "repos/$OWNER/$REPO" --jq 'select(.fork) | .parent.ssh_url' 2>/dev/null || true)
+    if [[ -n "$fork_parent" ]]; then
+        setup_upstream "$fork_parent"
+    fi
+elif [[ "$HOST" == *gitlab* ]] && command -v glab &>/dev/null; then
+    # GitLab API uses URL-encoded project path (owner%2Frepo).
+    # Note: forked_from_project is only returned when authenticated
+    # (see https://gitlab.com/gitlab-org/gitlab/-/issues/361952),
+    # so ensure `glab auth login --hostname <host>` has been run.
+    project_path="${OWNER}%2F${REPO}"
+    fork_parent=$(glab api "projects/$project_path" --hostname "$HOST" \
+        -q '.forked_from_project.ssh_url_to_repo // empty' 2>/dev/null || true)
+    if [[ -n "$fork_parent" ]]; then
+        setup_upstream "$fork_parent"
+    fi
+fi
+
+echo "$TARGET_DIR"

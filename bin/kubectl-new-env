@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# Create a new temporary kubeconfig file and display a command to
+# configure the current shell to use the new kubeconfig file.
+# This is helpful if you interact with multiple OpenShift clusters
+# at the same time.
+#
+# Usage:
+#   $(kubectl-new-env)
+set -euo pipefail
+
+KUBECONFIG=$(mktemp -t kubeconfig.XXXXX)
+chmod og-rwx ${KUBECONFIG}
+
+echo "export KUBECONFIG=${KUBECONFIG}"

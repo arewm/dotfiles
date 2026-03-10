@@ -1,0 +1,78 @@
+#!/bin/env bash
+
+# Sometimes you just need to create a new kind cluster with Tekton Chains on it
+# to help debug or explore. This script should help.
+
+set -euo pipefail
+
+# Determine cluster name
+CLUSTER_NAME=""
+if [ $# -gt 0 ]; then
+    # Use provided cluster name
+    CLUSTER_NAME="$1"
+elif git rev-parse --git-dir >/dev/null 2>&1; then
+    # Use git repository name as cluster name
+    CLUSTER_NAME=$(basename "$(git rev-parse --show-toplevel)")
+fi
+
+# Prepare kind commands with cluster name if available
+DELETE_CMD="kind delete cluster"
+CREATE_CMD="kind create cluster"
+
+if [ -n "$CLUSTER_NAME" ]; then
+    DELETE_CMD="$DELETE_CMD --name $CLUSTER_NAME"
+    CREATE_CMD="$CREATE_CMD --name $CLUSTER_NAME"
+fi
+
+# Start from a clean slate
+$DELETE_CMD
+
+# Start a new kind cluster
+# kind create cluster --image kindest/node:v1.24.13
+$CREATE_CMD
+
+# Install Tekton
+kubectl apply --filename https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
+# kubectl apply --filename https://storage.googleapis.com/tekton-releases/pipeline/previous/v0.41.3/release.yaml
+
+# Enable Useful Tekton Features
+kubectl -n tekton-pipelines patch cm feature-flags -p '{"data":{
+  "enable-tekton-oci-bundles": "true",
+  "enable-api-fields": "alpha",
+  "enable-step-actions": "true"
+}}'
+
+# Install Chains
+# kubectl apply --filename https://storage.googleapis.com/tekton-releases/chains/previous/v0.14.0/release.yaml
+kubectl apply --filename https://storage.googleapis.com/tekton-releases/chains/latest/release.yaml
+
+# Configure Chains
+
+kubectl -n tekton-chains patch cm chains-config -p '{"data": {
+  "artifacts.oci.storage": "oci",
+  "artifacts.pipelinerun.format": "in-toto",
+  "artifacts.pipelinerun.storage": "oci",
+  "artifacts.taskrun.format": "in-toto",
+  "artifacts.taskrun.storage": "oci"
+}}'
+
+# Generate Signing Secret
+COSIGN_PASSWORD=password cosign generate-key-pair k8s://tekton-chains/signing-secrets
+
+## Namespace Setup
+
+# Upload image registry secret and link to default service account.
+kubectl -n default create secret docker-registry $USER \
+  --from-file=.dockerconfigjson=$HOME/.docker/config.json
+
+# Wait for default ServiceAccount
+while true; do
+    output="$(oc -n default get ServiceAccount default --ignore-not-found)"
+    if [ -n "$output" ]; then
+        break
+    fi
+done
+
+# Link secret to service account
+kubectl -n default patch serviceaccount default -p '{"imagePullSecrets": [{"name": "'$USER'"}]}'
+kubectl -n default patch serviceaccount default -p '{"secrets": [{"name": "'$USER'"}]}'
