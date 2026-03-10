@@ -21,6 +21,9 @@ secrets = [
 "ohmyzsh/ohmyzsh" = { read = true }
 
 # Environment variables for all containers (workspace + agent)
-# Vertex AI ADC is injected via devcontainer.json secrets (GOOGLE_ADC podman secret)
+# GOOGLE_ADC_JSON is forwarded from host env, then postCreateCommand writes it to disk
+[env]
+allowlist = ["GOOGLE_ADC_JSON"]
+
 [env.vars]
 GOOGLE_CLOUD_PROJECT = "itpc-gcp-pnd-pe-eng-claude"
