@@ -1,14 +1,15 @@
 {
   "image": "ghcr.io/bootc-dev/devenv-debian",
-  "mounts": [
-    {
-      "source": "${localEnv:HOME}/.config/gcloud",
-      "target": "/home/devenv/.config/gcloud",
-      "type": "bind"
+  "secrets": {
+    "GOOGLE_ADC": {
+      "description": "Google Cloud application default credentials JSON"
     }
-  ],
+  },
   "containerEnv": {
     "GOOGLE_CLOUD_PROJECT": "${localEnv:GOOGLE_CLOUD_PROJECT}"
+  },
+  "postCreateCommand": {
+    "write-adc": "mkdir -p ~/.config/gcloud && echo \"$GOOGLE_ADC\" > ~/.config/gcloud/application_default_credentials.json"
   },
   "customizations": {
     "devaipod": {

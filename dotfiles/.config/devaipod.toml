@@ -19,9 +19,8 @@ secrets = [
 [service-gator.gh.repos]
 "arewm/*" = { read = true, create-draft = true }
 "ohmyzsh/ohmyzsh" = { read = true }
-"konflux-ci/*" = { read = true, create-draft = true }
 
 # Environment variables for all containers (workspace + agent)
-# Vertex AI auth is handled via gcloud ADC bind-mount in devcontainer.json
+# Vertex AI ADC is injected via devcontainer.json secrets (GOOGLE_ADC podman secret)
 [env.vars]
 GOOGLE_CLOUD_PROJECT = "itpc-gcp-pnd-pe-eng-claude"
