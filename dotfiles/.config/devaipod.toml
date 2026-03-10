@@ -23,7 +23,7 @@ secrets = [
 # Environment variables for all containers (workspace + agent)
 # GOOGLE_ADC_JSON is forwarded from host env, then postCreateCommand writes it to disk
 [env]
-allowlist = ["GOOGLE_ADC_JSON"]
+allowlist = ["GOOGLE_ADC_JSON", "GEMINI_API_KEY"]
 
 [env.vars]
 GOOGLE_CLOUD_PROJECT = "itpc-gcp-pnd-pe-eng-claude"
