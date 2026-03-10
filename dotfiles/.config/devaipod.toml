@@ -18,6 +18,7 @@ secrets = [
 # Service-gator configuration for AI agent access to GitHub
 [service-gator.gh.repos]
 "arewm/*" = { read = true, create-draft = true }
+"ohmyzsh/ohmyzsh" = { read = true }
 
 # Environment variables for all containers (workspace + agent)
 # Vertex AI auth is handled via gcloud ADC bind-mount in devcontainer.json
