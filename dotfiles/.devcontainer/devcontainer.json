@@ -1,0 +1,19 @@
+{
+  "image": "ghcr.io/bootc-dev/devenv-debian",
+  "mounts": [
+    {
+      "source": "${localEnv:HOME}/.config/gcloud",
+      "target": "/home/devenv/.config/gcloud",
+      "type": "bind"
+    }
+  ],
+  "containerEnv": {
+    "GOOGLE_CLOUD_PROJECT": "${localEnv:GOOGLE_CLOUD_PROJECT}"
+  },
+  "customizations": {
+    "devaipod": {
+      "nestedContainers": true
+    }
+  },
+  "runArgs": ["--privileged"]
+}
