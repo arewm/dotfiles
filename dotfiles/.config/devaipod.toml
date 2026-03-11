@@ -14,6 +14,9 @@ url = "https://github.com/arewm/dotfiles"
 secrets = [
     "GH_TOKEN=gh_token",
 ]
+file_secrets = [
+    "GOOGLE_APPLICATION_CREDENTIALS=GOOGLE_ADC",
+]
 
 # Service-gator configuration for AI agent access to GitHub
 [service-gator.gh.repos]
@@ -21,9 +24,8 @@ secrets = [
 "ohmyzsh/ohmyzsh" = { read = true }
 
 # Environment variables for all containers (workspace + agent)
-# GOOGLE_ADC_JSON is forwarded from host env, then postCreateCommand writes it to disk
 [env]
-allowlist = ["GOOGLE_ADC_JSON", "GEMINI_API_KEY"]
+allowlist = ["GOOGLE_GENERATIVE_AI_API_KEY"]
 
 [env.vars]
 GOOGLE_CLOUD_PROJECT = "itpc-gcp-pnd-pe-eng-claude"

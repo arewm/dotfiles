@@ -1,13 +1,5 @@
 {
   "image": "ghcr.io/bootc-dev/devenv-debian",
-  "secrets": {
-    "GOOGLE_ADC": {
-      "description": "Google Cloud application default credentials JSON"
-    }
-  },
-  "postCreateCommand": {
-    "write-adc": "if [ -n \"$GOOGLE_ADC\" ]; then mkdir -p ~/.config/gcloud && printf '%s' \"$GOOGLE_ADC\" > ~/.config/gcloud/application_default_credentials.json; fi"
-  },
   "customizations": {
     "devaipod": {
       "nestedContainers": true
