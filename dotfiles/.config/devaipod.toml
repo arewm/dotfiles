@@ -36,3 +36,5 @@ allowlist = ["GOOGLE_GENERATIVE_AI_API_KEY"]
 
 [env.vars]
 GOOGLE_CLOUD_PROJECT = "itpc-gcp-pnd-pe-eng-claude"
+# Allow sub-agents (task tool) without prompts; other tools use OpenCode defaults
+OPENCODE_PERMISSION = '{"task":"allow"}'
