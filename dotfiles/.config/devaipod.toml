@@ -21,6 +21,13 @@ file_secrets = [
 # Service-gator configuration for AI agent access to GitHub
 [service-gator.gh.repos]
 "arewm/*" = { read = true, create-draft = true }
+"sport-madness/*" = { read = true, create-draft = true }
+"konflux-ci/*" = { read = true, create-draft = true }
+"tektoncd/*" = { read = true }
+"conforma/*" = { read = true }
+"release-engineering/*" = { read = true }
+"redhat-appstudio/*" = { read = true }
+"slsa-framework/*" = { read = true }
 "ohmyzsh/ohmyzsh" = { read = true }
 
 # Environment variables for all containers (workspace + agent)
