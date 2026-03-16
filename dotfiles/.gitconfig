@@ -6,8 +6,12 @@
     path = ~/.gitconfig-gitlab
 [includeIf "gitdir:~/workspace/src/gitlab.com/**"]
     path = ~/.gitconfig-gitlab
+; devaipod workspace containers: use HTTPS + gh credential helper
+[includeIf "gitdir:/workspaces/**"]
+    path = ~/.gitconfig-devaipod
 [core]
 	editor = $(which vim)
+; SSH rewrite for host — overridden by .gitconfig-devaipod inside containers
 [url "git@github.com:"]
 	insteadOf = https://github.com/
 [gpg]

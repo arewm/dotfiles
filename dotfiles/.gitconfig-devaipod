@@ -1,0 +1,11 @@
+; Git config for devaipod workspace containers
+; Uses gh CLI as credential helper (GH_TOKEN is available via trusted secrets)
+[credential "https://github.com"]
+	helper =
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !/usr/bin/gh auth git-credential
+; Do NOT rewrite HTTPS to SSH — no SSH keys in the container
+[url "https://github.com/"]
+	insteadOf = git@github.com:

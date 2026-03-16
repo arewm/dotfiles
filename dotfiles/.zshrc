@@ -39,6 +39,18 @@ export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=us-east5
 export ANTHROPIC_VERTEX_PROJECT_ID=itpc-gcp-pnd-pe-eng-claude
 
+# devaipod control plane
+devaipod-start() {
+  podman run -d --name devaipod -p 8080:8080 --privileged \
+    -v devaipod-state:/var/lib/devaipod \
+    -v /run/podman/podman.sock:/run/docker.sock \
+    -e DEVAIPOD_HOST_SOCKET=/run/podman/podman.sock \
+    --secret gemini_api_key,type=env,target=GOOGLE_GENERATIVE_AI_API_KEY \
+    -v ~/.config/devaipod.toml:/root/.config/devaipod.toml:ro \
+    ghcr.io/cgwalters/devaipod:latest \
+    devaipod web --port 8080
+}
+
 # source additional environment files outside of source control
 source ~/.env_ai_assist
 source ~/.env_personal
