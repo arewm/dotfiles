@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "google-vertex-anthropic/claude-sonnet-4@default",
+  "model": "google-vertex-anthropic/claude-sonnet-4-6@default",
   "small_model": "google-vertex-anthropic/claude-haiku-4-5@default",
   "enabled_providers": ["google-vertex-anthropic", "google"],
   "disabled_providers": ["opencode", "google-vertex"],
