@@ -11,9 +11,6 @@
     path = ~/.gitconfig-devaipod
 [core]
 	editor = $(which vim)
-; SSH rewrite for host — overridden by .gitconfig-devaipod inside containers
-[url "git@github.com:"]
-	insteadOf = https://github.com/
 [gpg]
 	program = gpg
 [init]

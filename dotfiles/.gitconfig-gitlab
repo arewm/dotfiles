@@ -3,3 +3,7 @@
 	email = amcnamar@redhat.com
 [commit]
 	gpgsign = false
+[url "git@gitlab.cee.redhat.com:"]
+	insteadOf = https://gitlab.cee.redhat.com/
+[url "git@gitlab.com:"]
+	insteadOf = https://gitlab.com/

@@ -30,6 +30,10 @@ file_secrets = [
 "slsa-framework/*" = { read = true }
 "ohmyzsh/ohmyzsh" = { read = true }
 
+# Additional git hosting providers for bare-URL normalization
+[git]
+extra_hosts = ["gitlab.cee.redhat.com"]
+
 # Environment variables for all containers (workspace + agent)
 [env]
 allowlist = ["GOOGLE_GENERATIVE_AI_API_KEY"]
