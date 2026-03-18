@@ -23,3 +23,8 @@
 ; Do NOT rewrite HTTPS to SSH — no SSH keys in the container
 [url "https://github.com/"]
 	insteadOf = git@github.com:
+; Don't install rh-pre-commit hooks into repos created inside the container.
+; The global templateDir installs hooks that block commits in temporary repos
+; created by tests (e.g. cargo test in devaipod), causing test failures.
+[init]
+    templateDir =
