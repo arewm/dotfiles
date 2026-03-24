@@ -41,14 +41,29 @@ export ANTHROPIC_VERTEX_PROJECT_ID=itpc-gcp-pnd-pe-eng-claude
 
 # devaipod control plane
 devaipod-start() {
-  podman run -d --name devaipod -p 8080:8080 --privileged \
+  local image="${1:-ghcr.io/cgwalters/devaipod:latest}"
+  echo "Pulling ${image}..."
+  podman pull "${image}" || { echo "Failed to pull image"; return 1; }
+
+  # Prune abandoned devaipod volumes (dangling volumes with devaipod- prefix)
+  local stale
+  stale=$(podman volume ls --filter dangling=true --format '{{.Name}}' | grep '^devaipod-' || true)
+  if [[ -n "$stale" ]]; then
+    echo "Removing $(echo "$stale" | wc -l | tr -d ' ') abandoned devaipod volume(s)..."
+    echo "$stale" | xargs podman volume rm --force
+  fi
+
+  echo "Starting devaipod..."
+  podman run -d --name devaipod --privileged --replace \
+    -p 8080:8080 \
     -v devaipod-state:/var/lib/devaipod \
     -v /run/podman/podman.sock:/run/docker.sock \
     -e DEVAIPOD_HOST_SOCKET=/run/podman/podman.sock \
     --secret gemini_api_key,type=env,target=GOOGLE_GENERATIVE_AI_API_KEY \
     -v ~/.config/devaipod.toml:/root/.config/devaipod.toml:ro \
-    ghcr.io/cgwalters/devaipod:latest \
-    devaipod web --port 8080
+    -v ~/.ssh/config.d/devaipod:/run/devaipod-ssh:Z \
+    "${image}"
+  echo "devaipod started: http://127.0.0.1:8080/"
 }
 
 # source additional environment files outside of source control
