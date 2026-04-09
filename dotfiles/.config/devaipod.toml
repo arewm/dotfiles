@@ -3,6 +3,11 @@
 #
 # See https://github.com/cgwalters/devaipod#configuration for full documentation
 
+# Source directories - maps name -> path, mounted at /mnt/<name> in containers.
+# devaipod searches these for local clones when resolving repo URLs.
+[sources]
+src = "~/workspace/src"
+
 # Dotfiles repository to clone into workspaces
 [dotfiles]
 url = "https://github.com/arewm/dotfiles"
