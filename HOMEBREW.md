@@ -14,18 +14,22 @@ gemini-cli
 gh
 git
 glab
+glow
 gnu-sed
 golangci-lint
 helm
 imagemagick
 jira-cli
 jq
+just
+k3d
 kind
 ko
 krew
 kubectx
 kustomize
 make
+opa
 operator-sdk
 oras
 pinentry-mac
@@ -37,6 +41,7 @@ rust
 skopeo
 slp/krunkit/krunkit
 tektoncd-cli
+terminal-notifier
 tree
 uv
 vim
@@ -47,5 +52,8 @@ yq
 and casks
 ```bash
 $ brew ls --cask
-chromedriver	claude-code	podman-desktop
+claude-code
+obsidian
+podman-desktop
+spotify
 ```
