@@ -3,7 +3,7 @@
 	name = arewm
 	email = arewm@users.noreply.github.com
 [core]
-	editor = vim
+	editor = cat
 [push]
 	default = simple
 [diff]
