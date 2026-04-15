@@ -39,9 +39,35 @@ file_secrets = [
 [git]
 extra_hosts = ["gitlab.cee.redhat.com"]
 
+# Agent profiles — tried in order; first available binary wins.
+[agent]
+default = ["claude", "goose", "opencode"]
+
+[agent.profiles.opencode]
+command = ["opencode", "acp"]
+
+[agent.profiles.claude]
+command = ["claude-agent-acp"]
+
+[agent.profiles.claude.env]
+CLAUDE_CODE_USE_VERTEX = "1"
+CLOUD_ML_REGION = "us-east5"
+ANTHROPIC_VERTEX_PROJECT_ID = "itpc-gcp-pnd-pe-eng-claude"
+ANTHROPIC_MODEL = "claude-opus-4-6"
+
+[agent.profiles.goose]
+command = ["goose", "acp"]
+
+[agent.profiles.goose.env]
+GOOSE_PROVIDER = "gcp_vertex_ai"
+GOOSE_MODEL = "claude-opus-4-6"
+GOOSE_MODE = "auto"
+GCP_PROJECT_ID = "itpc-gcp-pnd-pe-eng-claude"
+GCP_REGION = "us-east5"
+
 # Environment variables for all containers (workspace + agent)
 [env]
-allowlist = ["GOOGLE_GENERATIVE_AI_API_KEY"]
+allowlist = ["GOOGLE_GENERATIVE_AI_API_KEY", "GOOGLE_API_KEY", "ANTHROPIC_API_KEY"]
 
 [env.vars]
 GOOGLE_CLOUD_PROJECT = "itpc-gcp-pnd-pe-eng-claude"
