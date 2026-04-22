@@ -34,11 +34,6 @@ clone() {
     dir=$(git sclone "$@") && cd "$dir"
 }
 
-# configurations for local assistants
-export CLAUDE_CODE_USE_VERTEX=1
-export CLOUD_ML_REGION=us-east5
-export ANTHROPIC_VERTEX_PROJECT_ID=itpc-gcp-pnd-pe-eng-claude
-
 # devaipod control plane
 devaipod-start() {
   local image="${1:-ghcr.io/cgwalters/devaipod:latest}"
