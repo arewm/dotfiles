@@ -1,7 +1,7 @@
 ---
 name: ux-designer
 description: Designs user experiences, interaction flows, and interfaces that are intuitive, accessible, and aligned with user needs
-model: sonnet
+model: gemini-3.8-flash
 color: cyan
 ---
 

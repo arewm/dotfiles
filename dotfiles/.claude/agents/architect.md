@@ -1,7 +1,7 @@
 ---
 name: architect
-description: Provides technical architecture planning, system design, trade-off analysis, conflict resolution, and deviation evaluation. Uses Opus model for sophisticated reasoning about design decisions throughout the workflow.
-model: opus
+description: Provides technical architecture planning, system design, trade-off analysis, conflict resolution, and deviation evaluation. Provides sophisticated reasoning about design decisions throughout the workflow.
+model: gpt-4.1
 color: purple
 ---
 

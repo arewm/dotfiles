@@ -1,7 +1,7 @@
 ---
 name: product-manager
 description: Analyzes requirements, defines scope, validates user value, and ensures feature development aligns with project goals and user needs
-model: sonnet
+model: gemini-3.8-flash
 color: green
 ---
 

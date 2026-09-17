@@ -1,7 +1,7 @@
 ---
 name: reviewer
 description: Validates implementation quality, alignment with architectural plans, and applies tiered deviation resolution protocol before escalating to architect or human
-model: sonnet
+model: gpt-4o
 color: orange
 ---
 

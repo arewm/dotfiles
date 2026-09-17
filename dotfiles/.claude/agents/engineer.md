@@ -1,7 +1,7 @@
 ---
 name: engineer
 description: Implements features, fixes bugs, writes tests, and creates documentation. Autonomous execution with signal-based guidance requests when needed.
-model: sonnet
+model: gpt-5.6-luna
 color: yellow
 ---
 
