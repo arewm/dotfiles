@@ -1,0 +1,50 @@
+version: 1.0.0
+title: "Content Review - Stage 3 (Gemini)"
+description: >
+  Gemini reads the fetched content and Sonnet's review, reacts to each finding,
+  and adds anything Sonnet missed. Writes to <scratch_dir>/review-b.md.
+
+settings:
+  goose_provider: gcp_vertex_ai
+  goose_model: gemini-3.8-flash
+  temperature: 0.3
+  max_turns: 15
+
+extensions:
+  - type: builtin
+    name: developer
+
+instructions: |
+  Get the scratch directory: scratch_dir=$(cat .current-content-review)
+  Read <scratch_dir>/manifest.md, <scratch_dir>/primary.md, any ref-*.md files,
+  and <scratch_dir>/review-a.md.
+
+  Produce a structured cross-validation using the template below.
+  Write it to <scratch_dir>/review-b.md.
+
+  ## REVIEW TEMPLATE
+
+  ```markdown
+  # Review B (Gemini)
+  ## Content: <title from manifest>
+
+  ## Reactions to Review A
+  For each finding in review-a.md respond with one of:
+  - AGREE — <finding summary> — [optionally: add severity or detail]
+  - DISAGREE — <finding summary> — Reason: <one sentence>
+  - AMPLIFY — <finding summary> — <additional context or higher severity>
+
+  ## Additional Findings
+  Findings not in review-a.md. Use the same format as the Assessment section
+  in review-a.md appropriate to the content type. Write "None" if review-a
+  was comprehensive.
+
+  ## Verdict
+  - Decision: READY | NEEDS_WORK | NEEDS_DISCUSSION
+  - Agrees with Review A: YES | PARTIALLY | NO
+  - Reasoning: [two sentences maximum]
+  ```
+
+prompt: |
+  Read the manifest, fetched content, and review-a.md from the scratch directory,
+  then write your cross-validation to <scratch_dir>/review-b.md. Use the template exactly.

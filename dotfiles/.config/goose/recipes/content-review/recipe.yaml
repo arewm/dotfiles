@@ -1,0 +1,105 @@
+version: 1.0.0
+title: "Content Review"
+description: >
+  Multi-stage review of any content: Jira issues, Slack threads, GitHub/GitLab PRs/MRs,
+  Drive docs, design documents, or file paths. Sonnet 4.6 resolves and fetches the
+  content (plus one level of referenced content), two models review with adapted lenses,
+  Sonnet 5 synthesizes into a timestamped review-YYYYMMDD-HHMMSS.md in cwd.
+
+parameters:
+  - key: content
+    input_type: string
+    requirement: required
+    description: >
+      Anything that identifies the content to review: a URL (Jira, GitHub PR, GitLab MR,
+      Slack thread, Drive doc), a Jira issue ID (e.g. KONFLUX-123), a file path, or a
+      free-text description of what to find.
+  - key: output_dir
+    input_type: string
+    requirement: optional
+    default: ""
+    description: "Directory to write review-TIMESTAMP.md. Defaults to cwd."
+
+settings:
+  goose_provider: gcp_vertex_ai
+  goose_model: gemini-3.8-flash
+  temperature: 0.1
+  max_turns: 20
+
+extensions:
+  - type: builtin
+    name: developer
+
+instructions: |
+  You are an orchestrator managing a four-stage content review workflow.
+
+  ## Setup
+  1. Determine the output directory: use {{ output_dir }} if provided, otherwise run `pwd`.
+  2. Get a timestamp by running: date '+%Y%m%d-%H%M%S'
+  3. Set:
+     - scratch_dir = <output_dir>/.content-review-<timestamp>
+     - output_file = <output_dir>/review-<timestamp>.md
+  4. If .current-content-review already exists in cwd, abort with:
+     "ERROR: A content review is already running. If stale, remove .current-content-review"
+  5. Create the scratch directory: mkdir -p <scratch_dir>
+  6. Write just the scratch_dir path to .current-content-review (this is how subrecipes find it):
+     echo "<scratch_dir>" > .current-content-review
+  7. Write to <scratch_dir>/meta.txt:
+     ```
+     content={{ content }}
+     output_file=<output_file>
+     scratch_dir=<scratch_dir>
+     ```
+
+  ## Stage 1: Fetch
+  Call the `fetch` subrecipe, passing scratch_dir and content.
+  It will resolve and fetch the primary content plus one level of references,
+  writing everything to <scratch_dir>/.
+  Verify <scratch_dir>/manifest.md exists before proceeding.
+
+  ## Stage 2: Review A
+  Call the `review_with_sonnet` subrecipe, passing scratch_dir.
+  It will read the manifest and fetched content, then write
+  <scratch_dir>/review-a.md.
+  Verify the file exists before proceeding.
+
+  ## Stage 3: Review B
+  Call the `review_with_gemini` subrecipe, passing scratch_dir.
+  It will read the manifest, fetched content, and review-a.md, then write
+  <scratch_dir>/review-b.md.
+  Verify the file exists before proceeding.
+
+  ## Stage 4: Synthesize
+  Call the `synthesize` subrecipe, passing scratch_dir and output_file.
+  It will read both reviews and write the final consolidated review to output_file.
+  Verify output_file exists before proceeding.
+
+  ## Cleanup
+  rm .current-content-review && rm -rf <scratch_dir>
+
+  ## Done
+  Tell the user: "Review complete: <output_file>"
+
+prompt: |
+  Run the four-stage content review for: {{ content }}
+
+sub_recipes:
+  - name: "fetch"
+    path: "./subrecipes/fetch.yaml"
+    values:
+      content: "{{ content }}"
+
+  - name: "review_with_sonnet"
+    path: "./subrecipes/review-with-sonnet.yaml"
+    values:
+      content: "{{ content }}"
+
+  - name: "review_with_gemini"
+    path: "./subrecipes/review-with-gemini.yaml"
+    values:
+      content: "{{ content }}"
+
+  - name: "synthesize"
+    path: "./subrecipes/synthesize.yaml"
+    values:
+      content: "{{ content }}"

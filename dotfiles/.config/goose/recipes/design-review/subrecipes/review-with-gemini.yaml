@@ -1,0 +1,67 @@
+version: 1.0.0
+title: "Design Review - Stage 2 (Gemini)"
+description: >
+  Gemini reads the design and Sonnet's review, reacts to each finding, and adds
+  anything Sonnet missed. Writes to <scratch_dir>/review-b.md.
+
+parameters:
+  - key: design_path
+    input_type: string
+    requirement: required
+    description: "Absolute path to the design document to review."
+
+settings:
+  goose_provider: gcp_vertex_ai
+  goose_model: gemini-3.8-flash
+  temperature: 0.3
+  max_turns: 10
+
+extensions:
+  - type: builtin
+    name: developer
+
+instructions: |
+  Get the scratch directory: scratch_dir=$(cat .current-design-review)
+  Read {{ design_path }} and <scratch_dir>/review-a.md.
+
+  Produce a structured cross-validation using exactly the template below.
+  Write it to <scratch_dir>/review-b.md.
+
+  ## OUTPUT TEMPLATE
+
+  ```markdown
+  # Stage 2 Review (Gemini)
+
+  ## Reactions to Stage 1
+  For each finding in review-a.md, respond with one of:
+  - AGREE — [finding summary] — [optionally: add severity or detail]
+  - DISAGREE — [finding summary] — Reason: [one sentence]
+  - AMPLIFY — [finding summary] — [additional context or higher severity]
+
+  ## Additional Findings
+  Findings not in review-a.md, using the same Section Assessments format.
+  Write "None" if review-a was comprehensive.
+
+  ### [Section Name] (if applicable)
+  - Claim: [claim]
+  - Assessment: SOUND | CONCERN | GAP
+  - Finding: [one sentence]
+  - Severity: BLOCKING | IMPORTANT | MINOR
+
+  ## Additional Missing Considerations
+  Write "None" if review-a covered everything.
+  - [concern] — Severity: BLOCKING | IMPORTANT | MINOR — [one sentence]
+
+  ## Open Questions
+  Respond to each open question from review-a, and add any new ones.
+  - Q[N]: AGREE | DISAGREE — [one sentence] | NEW: [question] — [recommendation or NEEDS INFO]
+
+  ## Verdict
+  - Decision: READY | NEEDS_WORK | NEEDS_REDESIGN
+  - Agrees with Stage 1: YES | PARTIALLY | NO
+  - Reasoning: [two sentences maximum]
+  ```
+
+prompt: |
+  Read {{ design_path }} and $(cat .current-design-review)/review-a.md, then write
+  your cross-validation to $(cat .current-design-review)/review-b.md using the template.

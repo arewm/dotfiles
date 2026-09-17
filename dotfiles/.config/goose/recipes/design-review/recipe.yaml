@@ -1,0 +1,80 @@
+version: 1.0.0
+title: "Design Review"
+description: >
+  Multi-stage design review. Sonnet 4.6 reviews the design, Gemini cross-validates and
+  reacts to Sonnet's findings, Sonnet 5 synthesizes into a single findings.md next to
+  the design file. Scratch files are cleaned up after synthesis.
+
+parameters:
+  - key: design_path
+    input_type: string
+    requirement: required
+    description: "Absolute path to the design document to review."
+
+settings:
+  goose_provider: gcp_vertex_ai
+  goose_model: gemini-3.8-flash
+  temperature: 0.1
+  max_turns: 20
+
+extensions:
+  - type: builtin
+    name: developer
+
+instructions: |
+  You are an orchestrator managing a three-stage design review workflow.
+
+  ## Setup
+  1. Determine design_dir: dirname of `{{ design_path }}` (run: dirname "{{ design_path }}")
+  2. Set scratch_dir = <design_dir>/.design-review
+  3. If .current-design-review exists in cwd, abort with:
+     "ERROR: A design review is already running. If stale, remove .current-design-review"
+  4. Create scratch directory: mkdir -p <scratch_dir>
+  5. Write scratch_dir path to pointer file: echo "<scratch_dir>" > .current-design-review
+  6. Write to <scratch_dir>/meta.txt:
+     ```
+     design_path={{ design_path }}
+     scratch_dir=<scratch_dir>
+     output_path=<design_dir>/findings.md
+     ```
+
+  ## Stage 1: Sonnet Review
+  Call the `review_with_sonnet` subrecipe. It will read `{{ design_path }}` and write
+  its structured review to `<design_dir>/.design-review/review-a.md`.
+  Verify the file exists before proceeding.
+
+  ## Stage 2: Gemini Cross-Validation
+  Call the `review_with_gemini` subrecipe. It will read both `{{ design_path }}` and
+  `<design_dir>/.design-review/review-a.md`, then write its response to
+  `<design_dir>/.design-review/review-b.md`.
+  Verify the file exists before proceeding.
+
+  ## Stage 3: Synthesis
+  Call the `synthesize` subrecipe. It will read both review files and write the final
+  consolidated findings to `<design_dir>/findings.md`.
+  Verify the file exists before proceeding.
+
+  ## Cleanup
+  rm .current-design-review && rm -rf <scratch_dir>
+
+  ## Done
+  Tell the user: "Design review complete. Findings written to <design_dir>/findings.md"
+
+prompt: |
+  Run the three-stage design review for {{ design_path }}.
+
+sub_recipes:
+  - name: "review_with_sonnet"
+    path: "./subrecipes/review-with-sonnet.yaml"
+    values:
+      design_path: "{{ design_path }}"
+
+  - name: "review_with_gemini"
+    path: "./subrecipes/review-with-gemini.yaml"
+    values:
+      design_path: "{{ design_path }}"
+
+  - name: "synthesize"
+    path: "./subrecipes/synthesize.yaml"
+    values:
+      design_path: "{{ design_path }}"

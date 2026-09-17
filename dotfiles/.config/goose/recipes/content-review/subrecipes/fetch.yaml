@@ -1,0 +1,121 @@
+version: 1.0.0
+title: "Content Fetch (Sonnet 4.6)"
+description: >
+  Resolves and fetches primary content plus one level of referenced content.
+  Writes fetched files and a manifest to the scratch directory.
+
+parameters:
+  - key: content
+    input_type: string
+    requirement: required
+    description: "Parameter: content."
+
+settings:
+  goose_provider: gcp_vertex_ai
+  goose_model: gemini-3.8-flash
+  temperature: 0.1
+  max_turns: 30
+
+extensions:
+  - type: builtin
+    name: developer
+
+instructions: |
+  Your job is to resolve what `{{ content }}` refers to, fetch it, scan for references,
+  fetch those too (one level only), and write everything to the scratch directory found
+  in the nearest .content-review-* directory under cwd.
+
+  Get the scratch directory: scratch_dir=$(cat .current-content-review)
+  Confirm it exists: ls <scratch_dir>/meta.txt
+
+  ## Step 1: Identify and fetch primary content
+
+  Determine what {{ content }} is and fetch it using the rules below. Write the result
+  to <scratch_dir>/primary.md with a header indicating the source and type.
+
+  ### Resolution rules (try in order):
+
+  **File path**: if it looks like a path and exists, read it directly. No refresh needed.
+
+  **Jira issue** (ID like KONFLUX-123, or a Jira URL):
+  - Always refresh first: pkm-sync fetch <url-or-"jira/ID"> --output $HOME/obsidian/arewm-rht/jira/
+  - If refresh fails, fall back to reading $HOME/obsidian/arewm-rht/jira/<ID>.md
+  - If local file also missing, query: sqlite3 ~/.config/pkm-sync/vectors.db \
+      "SELECT title, content FROM documents WHERE source_type='jira' AND source_id LIKE '%<ID>%' LIMIT 1"
+  - Record source as "jira:<ID>" and note whether content was refreshed or from cache
+
+  **GitHub PR/issue URL** (github.com/*/pull/* or github.com/*/issues/*):
+  - Always fetch live: gh pr view <url> --json title,body,comments,files 2>/dev/null \
+      || gh issue view <url> --json title,body,comments 2>/dev/null
+  - If gh fails, check $HOME/obsidian/arewm-rht/prs/ for a cached version
+  - Record source as "github:<url>"
+
+  **GitLab MR/issue URL** (gitlab.com or gitlab.cee.redhat.com):
+  - Always fetch live: glab mr view <mr_id> --repo <repo> 2>/dev/null \
+      || glab issue view <issue_id> --repo <repo> 2>/dev/null
+  - If glab fails, check if repo is in ~/workspace/src/ and read from there
+  - Record source as "gitlab:<url>"
+
+  **Slack URL** (redhat.slack.com or redhat.enterprise.slack.com):
+  - Replace redhat.slack.com with redhat.enterprise.slack.com in any URLs before displaying
+  - Extract the channel ID and message timestamp from the URL
+  - Query: sqlite3 ~/.config/pkm-sync/slack.db \
+      "SELECT author, content, created_at FROM slack_messages \
+       WHERE channel_id='<channel_id>' AND thread_ts='<ts>' \
+       ORDER BY created_at ASC LIMIT 100"
+  - If no results, try matching by message_url
+  - Note in manifest that Slack content is from local cache (may not be fully up to date)
+  - Record source as "slack:<channel>/<ts>"
+
+  **Google Drive URL** (docs.google.com or drive.google.com):
+  - Always refresh: pkm-sync fetch <url> --output $HOME/obsidian/arewm-rht/Drive/ --comments
+  - If refresh fails, check $HOME/obsidian/arewm-rht/Drive/ for a cached version
+  - Record source as "drive:<url>"
+
+  **Free text / ambiguous**: query vectors.db with semantic search:
+  sqlite3 ~/.config/pkm-sync/vectors.db \
+    "SELECT title, content, source_type FROM documents \
+     WHERE content LIKE '%<keyword>%' LIMIT 3"
+
+  ## Step 2: Scan for references
+
+  Read the fetched primary content and extract references matching these patterns:
+  - Jira IDs: [A-Z]+-[0-9]+ (e.g. KONFLUX-123, LTWL-456)
+  - GitHub URLs: github.com/*/pull/* or github.com/*/issues/*
+  - GitLab URLs: gitlab.*.redhat.com/* with /merge_requests/ or /issues/
+  - Slack URLs: redhat*.slack.com/archives/*
+  - Google Drive URLs: docs.google.com/* or drive.google.com/*
+  - Local file paths that exist on disk
+
+  Fetch each reference using the same rules as Step 1. Write each to
+  <scratch_dir>/ref-<N>.md (ref-1.md, ref-2.md, etc.) with a header indicating
+  the source. Skip any reference that fails to fetch — log it but do not abort.
+
+  Limit: fetch at most 5 references. If more exist, fetch the first 5 and note
+  the rest in the manifest.
+
+  ## Step 3: Write manifest
+
+  Write <scratch_dir>/manifest.md:
+
+  ```markdown
+  # Content Manifest
+
+  ## Primary Content
+  - File: primary.md
+  - Source: <source recorded in step 1>
+  - Type: <jira | github-pr | github-issue | gitlab-mr | gitlab-issue | slack | drive | file | unknown>
+  - Title: <title or first line>
+
+  ## Referenced Content
+  - File: ref-1.md — Source: <source> — Title: <title>
+  - File: ref-2.md — Source: <source> — Title: <title>
+  (one line per fetched reference)
+
+  ## Skipped References
+  (list any references found but not fetched, with reason)
+  ```
+
+prompt: |
+  Resolve and fetch the content for "{{ content }}", scan for references, fetch those
+  too, and write everything plus a manifest to the scratch directory.

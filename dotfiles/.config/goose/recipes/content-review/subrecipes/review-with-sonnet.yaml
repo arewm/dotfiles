@@ -1,0 +1,70 @@
+version: 1.0.0
+title: "Content Review - Stage 2 (Sonnet 4.6)"
+description: >
+  Sonnet 4.6 reviews the fetched content with lenses appropriate to the content type.
+  Writes a structured review to <scratch_dir>/review-a.md.
+
+settings:
+  goose_provider: gcp_vertex_ai
+  goose_model: gemini-3.8-flash
+  temperature: 0.3
+  max_turns: 15
+
+extensions:
+  - type: builtin
+    name: developer
+
+instructions: |
+  Get the scratch directory: scratch_dir=$(cat .current-content-review)
+  Read <scratch_dir>/manifest.md to understand what was fetched and the content type.
+  Read <scratch_dir>/primary.md and any ref-*.md files listed in the manifest.
+
+  Produce a structured review using the template below, adapted to the content type
+  from the manifest. Write it to <scratch_dir>/review-a.md.
+
+  ## REVIEW TEMPLATE
+
+  ```markdown
+  # Review A (Sonnet 4.6)
+  ## Content: <title from manifest>
+  ## Type: <type from manifest>
+
+  ## Referenced Content Used
+  List which ref-*.md files informed this review, if any.
+
+  ## Assessment
+  Fill in the section appropriate to the content type. Do not add extra sections.
+
+  ### If type is jira or github-issue or gitlab-issue:
+  - Clarity: CLEAR | UNCLEAR — <one sentence>
+  - Completeness: COMPLETE | GAPS — list any missing: acceptance criteria / context / scope
+  - Feasibility: FEASIBLE | CONCERNS — <one sentence on implementation feasibility>
+  - Blocking questions: [list, or "None"]
+
+  ### If type is github-pr or gitlab-mr:
+  - Correctness: SOUND | CONCERN — <finding> — Severity: BLOCKING | IMPORTANT | MINOR
+  - Security: SOUND | CONCERN — <finding> — Severity: BLOCKING | IMPORTANT | MINOR
+  - Test coverage: ADEQUATE | GAP — <finding> — Severity: BLOCKING | IMPORTANT | MINOR
+  - Breaking changes: NONE | PRESENT — <description if present>
+  - Review readiness: READY | NEEDS_WORK — <one sentence>
+
+  ### If type is slack:
+  - Decisions made: [list, or "None identified"]
+  - Action items: [list with owner if mentioned, or "None identified"]
+  - Open questions: [list, or "None"]
+  - Should be documented: YES | NO — <what and where if yes>
+
+  ### If type is drive or file or unknown:
+  - Key claims: [list the main claims or assertions]
+  - Concerns: [finding] — Severity: BLOCKING | IMPORTANT | MINOR
+  - Missing considerations: [finding] — Severity: BLOCKING | IMPORTANT | MINOR
+  - Open questions: [list, or "None"]
+
+  ## Verdict
+  - Decision: READY | NEEDS_WORK | NEEDS_DISCUSSION
+  - Reasoning: [two sentences maximum]
+  ```
+
+prompt: |
+  Read the manifest and fetched content from the scratch directory, then write your
+  structured review to <scratch_dir>/review-a.md. Use the template exactly.

@@ -1,0 +1,61 @@
+version: 1.0.0
+title: "Content Review - Stage 4: Synthesize (Sonnet 5)"
+description: >
+  Sonnet 5 reads both reviews and synthesizes a single consolidated findings file.
+  High-confidence findings (agreed by both models) are separated from single-model findings.
+
+settings:
+  goose_provider: gcp_vertex_ai
+  goose_model: gemini-3.8-flash
+  temperature: 0.2
+  max_turns: 15
+
+extensions:
+  - type: builtin
+    name: developer
+
+instructions: |
+  Get the scratch directory: scratch_dir=$(cat .current-content-review)
+  Read <scratch_dir>/meta.txt to find output_file.
+  Read <scratch_dir>/manifest.md, <scratch_dir>/review-a.md, <scratch_dir>/review-b.md.
+
+  Synthesize both reviews into a single consolidated findings file at output_file.
+  Use exactly this template:
+
+  ```markdown
+  # Content Review
+  ## Source: <title and type from manifest>
+  ## Reviewed: <timestamp from output_file name>
+
+  ## Referenced Content
+  List items from the manifest that informed this review, one line each.
+  Omit if none.
+
+  ## Verdict
+  READY | NEEDS_WORK | NEEDS_DISCUSSION
+  <Two sentences: overall assessment and the single most important reason.>
+
+  ## Confirmed Findings
+  Both models agreed on these. High confidence.
+  - [finding] — Severity: BLOCKING | IMPORTANT | MINOR
+
+  ## Single-Model Findings
+  Raised by one model only. Worth considering but lower confidence.
+  - [finding] — Raised by: Sonnet | Gemini — Severity: BLOCKING | IMPORTANT | MINOR
+
+  ## Disagreements
+  Where the models differed. Use your judgment to note which position is stronger.
+  Omit section if none.
+  - [topic]: Sonnet said [X], Gemini said [Y] — Assessment: [one sentence]
+
+  ## Action Items
+  Concrete next steps, if any. Omit if none.
+  - [action] — Owner: [if mentioned] — Priority: HIGH | MEDIUM | LOW
+  ```
+
+  Do not include implementation details, explanations of the review process, or
+  any content beyond what the template specifies.
+
+prompt: |
+  Read review-a.md and review-b.md from the scratch directory and synthesize them
+  into the output file specified in meta.txt. Use the template exactly.

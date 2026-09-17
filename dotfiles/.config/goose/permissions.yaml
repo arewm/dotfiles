@@ -1,0 +1,7 @@
+user:
+  always_allow:
+    - developer__shell
+    - developer__text_editor
+    - summon__summon
+  ask_before: []
+  never_allow: []

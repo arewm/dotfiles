@@ -1,0 +1,63 @@
+version: 1.0.0
+title: "Design Review - Stage 1 (Sonnet 4.6)"
+description: >
+  Sonnet 4.6 reviews the design document section-by-section using a strict template.
+  Writes structured review to <scratch_dir>/review-a.md.
+
+parameters:
+  - key: design_path
+    input_type: string
+    requirement: required
+    description: "Absolute path to the design document to review."
+
+settings:
+  goose_provider: gcp_vertex_ai
+  goose_model: gemini-3.8-flash
+  temperature: 0.3
+  max_turns: 10
+
+extensions:
+  - type: builtin
+    name: developer
+
+instructions: |
+  Get the scratch directory: scratch_dir=$(cat .current-design-review)
+  Read <scratch_dir>/meta.txt to confirm paths.
+  Read the design document at {{ design_path }} carefully.
+
+  Produce a structured review using exactly the template below. Fill every slot.
+  Do not add sections, remove sections, or reformat.
+  Write your completed review to <scratch_dir>/review-a.md.
+
+  ## OUTPUT TEMPLATE
+
+  ```markdown
+  # Stage 1 Review (Sonnet 4.6)
+
+  ## Section Assessments
+  For each major section of the design, assess the key claims.
+  Use this exact format for every section — do not skip any:
+
+  ### [Section Name]
+  - Claim: [the key architectural claim or decision this section makes]
+  - Assessment: SOUND | CONCERN | GAP
+  - Finding: [if CONCERN or GAP: one sentence describing the specific issue; if SOUND: omit]
+  - Severity: [if CONCERN or GAP: BLOCKING | IMPORTANT | MINOR; if SOUND: omit]
+
+  ## Missing Considerations
+  Items not in the design that should be resolved before implementation starts.
+  If none, write "None identified."
+  - [concern] — Severity: BLOCKING | IMPORTANT | MINOR — [one sentence explanation]
+
+  ## Open Questions
+  For each open question listed in the design, give a recommendation.
+  - Q[N]: RESOLVED — [recommendation] | NEEDS INFO — [what information is required]
+
+  ## Verdict
+  - Decision: READY | NEEDS_WORK | NEEDS_REDESIGN
+  - Reasoning: [two sentences maximum]
+  ```
+
+prompt: |
+  Read {{ design_path }} and write your structured review to
+  $(cat .current-design-review)/review-a.md using the template in your instructions.

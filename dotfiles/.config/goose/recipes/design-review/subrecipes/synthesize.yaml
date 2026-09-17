@@ -1,0 +1,61 @@
+version: 1.0.0
+title: "Design Review - Stage 3: Synthesize (Sonnet 5)"
+description: >
+  Sonnet 5 reads both reviews and synthesizes a single findings.md.
+  Confirmed findings (agreed by both) are separated from single-model findings.
+
+parameters:
+  - key: design_path
+    input_type: string
+    requirement: required
+    description: "Absolute path to the design document to review."
+
+settings:
+  goose_provider: gcp_vertex_ai
+  goose_model: gemini-3.8-flash
+  temperature: 0.2
+  max_turns: 10
+
+extensions:
+  - type: builtin
+    name: developer
+
+instructions: |
+  Get the scratch directory: scratch_dir=$(cat .current-design-review)
+  Read <scratch_dir>/meta.txt to find output_path.
+  Read <scratch_dir>/review-a.md and <scratch_dir>/review-b.md.
+
+  Synthesize both reviews into a single findings file at output_path.
+  Use exactly this template — no additional sections, no preamble:
+
+  ```markdown
+  # Design Review
+  ## Document: [filename from design_path]
+
+  ## Verdict
+  READY | NEEDS_WORK | NEEDS_REDESIGN
+  [Two sentences: overall assessment and the single most important reason.]
+
+  ## Confirmed Findings
+  Both models agreed. High confidence.
+  - [finding] — Severity: BLOCKING | IMPORTANT | MINOR
+
+  ## Single-Model Findings
+  Raised by one model only. Lower confidence.
+  - [finding] — Raised by: Sonnet | Gemini — Severity: BLOCKING | IMPORTANT | MINOR
+
+  ## Disagreements
+  Omit section if none.
+  - [topic]: Sonnet said [X], Gemini said [Y] — Assessment: [one sentence]
+
+  ## Open Questions
+  ### Resolved
+  - Q[N]: [recommendation]
+
+  ### Still Open
+  - Q[N]: [what is needed to resolve it]
+  ```
+
+prompt: |
+  Read review-a.md and review-b.md from $(cat .current-design-review) and synthesize
+  them into the output_path from meta.txt. Use the template exactly.
