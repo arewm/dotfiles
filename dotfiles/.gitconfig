@@ -1,10 +1,16 @@
 ; includes for "Git Hub" and public type repos
 [includeIf "gitdir:~/workspace/src/github.com/**"]
     path = ~/.gitconfig-github
+[includeIf "gitdir:~/workspace/worktrees/github.com/**"]
+    path = ~/.gitconfig-github
 ; includes for "Red Hat" and private type repos
 [includeIf "gitdir:~/workspace/src/gitlab.cee.redhat.com/**"]
     path = ~/.gitconfig-gitlab
+[includeIf "gitdir:~/workspace/worktrees/gitlab.cee.redhat.com/**"]
+    path = ~/.gitconfig-gitlab
 [includeIf "gitdir:~/workspace/src/gitlab.com/**"]
+    path = ~/.gitconfig-gitlab
+[includeIf "gitdir:~/workspace/worktrees/gitlab.com/**"]
     path = ~/.gitconfig-gitlab
 ; devaipod workspace containers: use HTTPS + gh credential helper
 [includeIf "gitdir:/workspaces/**"]
