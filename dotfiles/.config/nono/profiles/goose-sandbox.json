@@ -1,0 +1,25 @@
+{
+  "extends": "goose-base",
+  "meta": {
+    "name": "goose-sandbox",
+    "version": "1.0.0",
+    "description": "goose AI agent — recipe runner. Scoped to $WORKDIR (project_path). No cluster access. Used by grrc and similar recipe wrappers.",
+    "author": "arewm"
+  },
+  "filesystem": {
+    "allow": [
+      "$WORKDIR"
+    ],
+    "read": [],
+    "write": [],
+    "allow_file": [],
+    "read_file": [],
+    "write_file": [],
+    "deny": [],
+    "bypass_protection": [],
+    "suppress_save_prompt": []
+  },
+  "workdir": {
+    "access": "none"
+  }
+}

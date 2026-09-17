@@ -1,0 +1,9 @@
+{
+  "extends": ["goose-sandbox", "goose-local"],
+  "meta": {
+    "name": "goose-sandbox-local",
+    "version": "1.0.0",
+    "description": "goose AI agent — recipe runner with local KinD cluster access. Scoped to $WORKDIR. kubectl/oc/tkn/kind unrestricted. Extended from goose-sandbox + goose-local.",
+    "author": "arewm"
+  }
+}

@@ -1,0 +1,160 @@
+{
+  "extends": "goose-base",
+  "meta": {
+    "name": "goose",
+    "version": "2.0.0",
+    "description": "goose AI agent — remote clusters, read-only. Use goose-local for KinD destructive ops.",
+    "author": "arewm"
+  },
+  "filesystem": {
+    "allow": [
+      "~/go/pkg/mod",
+      "~/.local/state/lightwell"
+    ],
+    "read": [
+      "~/.agents",
+      "~/.local/share/rh-pre-commit"
+    ],
+    "allow_file": [
+      "/opt/homebrew/bin/git",
+      "~/.gitconfig-gitlab"
+    ]
+  },
+  "command_policies": {
+    "commands": {
+      "kubectl": {
+        "executable": "/opt/homebrew/bin/kubectl",
+        "from": {
+          "session": {
+            "sandbox": {
+              "fs_read": [
+                "$HOME/.kube",
+                "$HOME/.krew",
+                "$HOME/.config/containers"
+              ],
+              "network": {
+                "allow_domain": [
+                  "api.stone-prod-p01.wcfb.p1.openshiftapps.com"
+                ]
+              }
+            },
+            "invocation_policy": {
+              "default": "deny",
+              "allow": [
+                { "argv": { "prefix": ["get"] },                      "reason": "read cluster state" },
+                { "argv": { "prefix": ["describe"] },                 "reason": "read cluster state" },
+                { "argv": { "prefix": ["logs"] },                     "reason": "read pod logs" },
+                { "argv": { "prefix": ["explain"] },                  "reason": "read API docs" },
+                { "argv": { "prefix": ["diff"] },                     "reason": "diff without applying" },
+                { "argv": { "prefix": ["top"] },                      "reason": "read resource usage" },
+                { "argv": { "prefix": ["version"] },                  "reason": "read version info" },
+                { "argv": { "prefix": ["cluster-info"] },             "reason": "read cluster info" },
+                { "argv": { "prefix": ["api-resources"] },            "reason": "read API resources" },
+                { "argv": { "prefix": ["api-versions"] },             "reason": "read API versions" },
+                { "argv": { "prefix": ["config", "get-contexts"] },   "reason": "list contexts" },
+                { "argv": { "prefix": ["config", "view"] },           "reason": "read kubeconfig" },
+                { "argv": { "prefix": ["config", "use-context"] },    "reason": "switch context" },
+                { "argv": { "prefix": ["config", "current-context"] }, "reason": "read current context" }
+              ]
+            }
+          }
+        }
+      },
+      "oc": {
+        "executable": "/usr/local/bin/oc",
+        "from": {
+          "session": {
+            "sandbox": {
+              "fs_read": [
+                "$HOME/.kube",
+                "$HOME/.config/containers"
+              ],
+              "network": {
+                "allow_domain": [
+                  "api.stone-prod-p01.wcfb.p1.openshiftapps.com"
+                ]
+              }
+            },
+            "invocation_policy": {
+              "default": "deny",
+              "allow": [
+                { "argv": { "prefix": ["get"] },                      "reason": "read cluster state" },
+                { "argv": { "prefix": ["describe"] },                 "reason": "read cluster state" },
+                { "argv": { "prefix": ["logs"] },                     "reason": "read pod logs" },
+                { "argv": { "prefix": ["explain"] },                  "reason": "read API docs" },
+                { "argv": { "prefix": ["diff"] },                     "reason": "diff without applying" },
+                { "argv": { "prefix": ["top"] },                      "reason": "read resource usage" },
+                { "argv": { "prefix": ["version"] },                  "reason": "read version info" },
+                { "argv": { "prefix": ["cluster-info"] },             "reason": "read cluster info" },
+                { "argv": { "prefix": ["api-resources"] },            "reason": "read API resources" },
+                { "argv": { "prefix": ["api-versions"] },             "reason": "read API versions" },
+                { "argv": { "prefix": ["status"] },                   "reason": "read project status" },
+                { "argv": { "prefix": ["projects"] },                 "reason": "list projects" },
+                { "argv": { "prefix": ["whoami"] },                   "reason": "read identity" },
+                { "argv": { "prefix": ["config", "get-contexts"] },   "reason": "list contexts" },
+                { "argv": { "prefix": ["config", "view"] },           "reason": "read kubeconfig" },
+                { "argv": { "prefix": ["config", "use-context"] },    "reason": "switch context" },
+                { "argv": { "prefix": ["config", "current-context"] }, "reason": "read current context" }
+              ]
+            }
+          }
+        }
+      },
+      "tkn": {
+        "executable": "/opt/homebrew/bin/tkn",
+        "from": {
+          "session": {
+            "sandbox": {
+              "fs_read": [
+                "$HOME/.kube",
+                "$HOME/.config/containers"
+              ],
+              "network": {
+                "allow_domain": [
+                  "api.stone-prod-p01.wcfb.p1.openshiftapps.com"
+                ]
+              }
+            },
+            "invocation_policy": {
+              "default": "deny",
+              "allow": [
+                { "argv": { "prefix": ["pipeline", "list"] },         "reason": "read pipelines" },
+                { "argv": { "prefix": ["pipeline", "describe"] },     "reason": "read pipelines" },
+                { "argv": { "prefix": ["pipelinerun", "list"] },      "reason": "read pipeline runs" },
+                { "argv": { "prefix": ["pipelinerun", "describe"] },  "reason": "read pipeline runs" },
+                { "argv": { "prefix": ["pipelinerun", "logs"] },      "reason": "read pipeline logs" },
+                { "argv": { "prefix": ["task", "list"] },             "reason": "read tasks" },
+                { "argv": { "prefix": ["task", "describe"] },         "reason": "read tasks" },
+                { "argv": { "prefix": ["taskrun", "list"] },          "reason": "read task runs" },
+                { "argv": { "prefix": ["taskrun", "describe"] },      "reason": "read task runs" },
+                { "argv": { "prefix": ["taskrun", "logs"] },          "reason": "read task logs" },
+                { "argv": { "prefix": ["clustertask", "list"] },      "reason": "read cluster tasks" },
+                { "argv": { "prefix": ["clustertask", "describe"] },  "reason": "read cluster tasks" },
+                { "argv": { "prefix": ["trigger", "list"] },          "reason": "read triggers" },
+                { "argv": { "prefix": ["version"] },                  "reason": "read version info" }
+              ]
+            }
+          }
+        }
+      },
+      "kubectl-ka": {
+        "executable": "/Users/arewm/.local/bin/kubectl-ka",
+        "from": {
+          "session": {
+            "sandbox": {
+              "fs_read": [
+                "$HOME/.kube",
+                "$HOME/.config/containers"
+              ],
+              "network": {
+                "allow_domain": [
+                  "api.stone-prod-p01.wcfb.p1.openshiftapps.com"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,256 @@
+{
+  "extends": [
+    "default"
+  ],
+  "meta": {
+    "name": "goose-base",
+    "version": "1.6.0",
+    "description": "goose AI agent \u2014 shared base. Filesystem, groups, kube paths, kind. Extended by goose (read-only) and goose-local (destructive).",
+    "author": "arewm"
+  },
+  "security": {
+    "signal_mode": null,
+    "process_info_mode": null,
+    "ipc_mode": null,
+    "capability_elevation": null,
+    "wsl2_proxy_policy": null
+  },
+  "groups": {
+    "include": [
+      "git_config",
+      "user_caches_macos",
+      "node_runtime",
+      "python_runtime",
+      "rust_runtime",
+      "nix_runtime",
+      "vscode_macos",
+      "vscode_linux",
+      "linux_sysfs_read"
+    ],
+    "exclude": [
+      "dangerous_commands",
+      "unlink_protection"
+    ]
+  },
+  "commands": {
+    "allow": [],
+    "deny": []
+  },
+  "filesystem": {
+    "allow": [
+      "$HOME/.config/goose",
+      "$HOME/.local/share/goose",
+      "$HOME/.local/state/goose",
+      "$HOME/.config/nono/profile-drafts",
+      "$HOME/workspace/src",
+      "$HOME/workspace/worktrees",
+      "$HOME/.config/pkm-sync"
+    ],
+    "read": [
+      "$HOME/workspace",
+      "$HOME/.kube",
+      "$HOME/.krew",
+      "$HOME/.local/bin",
+      "$HOME/.config/containers",
+      "$HOME/Library/Keychains",
+      "$HOME/.config/gcloud",
+      "$HOME/.config/gh",
+      "$HOME/Library/Application Support/glab-cli",
+      "$HOME/.claude",
+      "$HOME/.config/.jira"
+    ],
+    "write": [],
+    "allow_file": [],
+    "read_file": [
+      "$HOME/.zshrc",
+      "~/.CFUserTextEncoding",
+      "$HOME/.ssh/id_ed25519_nono_gitlab",
+      "$HOME/.ssh/id_ed25519_nono_github",
+      "$HOME/.ssh/config.d/nono"
+    ],
+    "write_file": [
+      "$HOME/.kube/config"
+    ],
+    "unix_socket": [],
+    "unix_socket_bind": [],
+    "unix_socket_dir": [],
+    "unix_socket_dir_bind": [],
+    "unix_socket_subtree": [],
+    "unix_socket_subtree_bind": [],
+    "deny": [],
+    "bypass_protection": [
+      "$HOME/.kube",
+      "$HOME/Library/Keychains",
+      "$HOME/.config/gcloud",
+      "$HOME/.zshrc",
+      "$HOME/.ssh/id_ed25519_nono_gitlab",
+      "$HOME/.ssh/id_ed25519_nono_github",
+      "$HOME/.ssh/config.d/nono"
+    ],
+    "suppress_save_prompt": [
+      "/Library/Preferences/com.apple.networkd.plist"
+    ]
+  },
+  "network": {
+    "block": false,
+    "allow_http2": false,
+    "allow_domain": [],
+    "deny_domain": [],
+    "open_port": [],
+    "open_port_range": [],
+    "listen_port": [],
+    "listen_port_range": [],
+    "connect_port": [],
+    "no_proxy": [],
+    "custom_credentials": {},
+    "tls_intercept": null,
+    "upstream_proxy": null,
+    "upstream_bypass": []
+  },
+  "diagnostics": {
+    "suppress_system_services": [
+      "system-socket"
+    ]
+  },
+  "linux": {
+    "af_unix_mediation": null,
+    "sandbox_policy": null
+  },
+  "env_credentials": {},
+  "command_policies": {
+    "executable_dirs": [],
+    "allow_writable_executables": false,
+    "entrypoint": null,
+    "approval_backends": {},
+    "approval_defaults": {
+      "backend": null,
+      "timeout_secs": null
+    },
+    "credentials": {},
+    "commands": {
+      "git": {
+        "executable": "/opt/homebrew/bin/git",
+        "allow_writable_executable": false,
+        "can_use": [],
+        "sandbox": null,
+        "from": {
+          "session": {
+            "sandbox": {
+              "fs_read": [
+                "$WORKDIR",
+                "$HOME/workspace/src",
+                "$HOME/workspace/worktrees",
+                "$HOME/.config/git",
+                "/opt/homebrew/Cellar",
+                "/opt/homebrew/opt",
+                "/usr/bin",
+                "/Library/Preferences/Logging",
+                "/System/Volumes/Data",
+                "/dev",
+                "$HOME/Library/Preferences",
+                "$HOME/.ssh/config.d"
+              ],
+              "fs_read_file": [
+                "@git:config-files",
+                "/opt/homebrew/etc/gitconfig",
+                "$HOME/.CFUserTextEncoding",
+                "$HOME/.ssh/config",
+                "$HOME/.ssh/known_hosts",
+                "$HOME/.ssh/id_ed25519_nono_gitlab",
+                "$HOME/.ssh/id_ed25519_nono_github"
+              ],
+              "fs_write": [
+                "$WORKDIR",
+                "$HOME/workspace/src",
+                "$HOME/workspace/worktrees",
+                "@git:common-dir"
+              ],
+              "fs_write_file": [
+                "$HOME/.ssh/known_hosts"
+              ],
+              "use_credentials": [],
+              "credentials": [],
+              "argv_prepend": [],
+              "network": null,
+              "environment": {
+                "allow_vars": [
+                  "SSH_AUTH_SOCK",
+                  "GIT_SSH_COMMAND"
+                ],
+                "set_vars": {
+                  "GIT_SSH_COMMAND": "/usr/bin/ssh -F /Users/arewm/.ssh/config.d/nono"
+                }
+              },
+              "allow_raw_file_credentials_in_chained_policy": false,
+              "resources": null,
+              "stdio": null,
+              "open_urls": null,
+              "allow_launch_services": false,
+              "unsafe_macos_seatbelt_rules": [
+                "(allow process-exec (literal \"/usr/bin/ssh\"))",
+                "(allow process-exec (literal \"/usr/bin/ssh-keyscan\"))",
+                "(allow network-outbound (remote tcp \"*:22\"))",
+                "(allow file-write* (literal \"/dev/dtracehelper\"))",
+                "(allow network-outbound (remote unix-socket (path-prefix \"/var/run/com.apple.launchd.\")))",
+                "(allow user-preference-read)",
+                "(allow process-exec (subpath \"/opt/homebrew/opt/git/libexec/git-core\"))",
+                "(allow process-exec (subpath \"/opt/homebrew/Cellar/git\"))",
+                "(allow file-read-data (regex #\"/var/run/com\\.apple\\.launchd\\.[^/]+/Listeners$\"))",
+                "(allow process-exec* (literal \"/bin/sh\"))",
+                "(allow process-exec* (literal \"/bin/bash\"))"
+              ]
+            },
+            "invocation_policy": {
+              "default": "allow",
+              "deny": [
+                {
+                  "argv": {
+                    "exact": null,
+                    "prefix": [
+                      "push"
+                    ],
+                    "contains": null
+                  },
+                  "env": {},
+                  "backend": null,
+                  "reason": "no remote pushes without human review",
+                  "timeout_secs": null
+                }
+              ],
+              "approve": [],
+              "allow": []
+            }
+          }
+        },
+        "allow_direct_exec_bypass": [],
+        "allow_direct_exec_bypass_with_credentials": false
+      }
+    },
+    "deny_direct_exec_bypass": []
+  },
+  "credential_capture": {},
+  "credential_providers": {},
+  "credential_routes": [],
+  "workdir": {
+    "access": "readwrite"
+  },
+  "hooks": {},
+  "session_hooks": {},
+  "rollback": {
+    "exclude_patterns": [
+      "node_modules",
+      ".next",
+      "__pycache__",
+      "target"
+    ],
+    "exclude_globs": [
+      "*.tmp.[0-9]*.[0-9]*"
+    ]
+  },
+  "allow_launch_services": true,
+  "interactive": false,
+  "skipdirs": [],
+  "packs": [],
+  "command_args": [],
+  "unsafe_macos_seatbelt_rules": []
+}

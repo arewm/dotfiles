@@ -1,0 +1,123 @@
+{
+  "extends": "goose-base",
+  "meta": {
+    "name": "goose-local",
+    "version": "2.0.0",
+    "description": "goose AI agent \u2014 local KinD clusters, destructive ops allowed. Use goose for remote read-only work.",
+    "author": "arewm"
+  },
+  "command_policies": {
+    "commands": {
+      "kubectl": {
+        "executable": "/opt/homebrew/bin/kubectl",
+        "from": {
+          "session": {
+            "sandbox": {
+              "fs_read": [
+                "$HOME/.kube",
+                "$HOME/.krew",
+                "$HOME/.config/containers"
+              ],
+              "network": {
+                "allow_domain": [
+                  "api.stone-prod-p01.wcfb.p1.openshiftapps.com"
+                ]
+              }
+            },
+            "invocation_policy": {
+              "default": "allow"
+            }
+          }
+        }
+      },
+      "oc": {
+        "executable": "/usr/local/bin/oc",
+        "from": {
+          "session": {
+            "sandbox": {
+              "fs_read": [
+                "$HOME/.kube",
+                "$HOME/.config/containers"
+              ],
+              "network": {
+                "allow_domain": [
+                  "api.stone-prod-p01.wcfb.p1.openshiftapps.com"
+                ]
+              }
+            },
+            "invocation_policy": {
+              "default": "allow"
+            }
+          }
+        }
+      },
+      "tkn": {
+        "executable": "/opt/homebrew/bin/tkn",
+        "from": {
+          "session": {
+            "sandbox": {
+              "fs_read": [
+                "$HOME/.kube",
+                "$HOME/.config/containers"
+              ],
+              "network": {
+                "allow_domain": [
+                  "api.stone-prod-p01.wcfb.p1.openshiftapps.com"
+                ]
+              }
+            },
+            "invocation_policy": {
+              "default": "allow"
+            }
+          }
+        }
+      },
+      "kubectl-ka": {
+        "executable": "/Users/arewm/.local/bin/kubectl-ka",
+        "from": {
+          "session": {
+            "sandbox": {
+              "fs_read": [
+                "$HOME/.kube",
+                "$HOME/.config/containers"
+              ],
+              "network": {
+                "allow_domain": [
+                  "api.stone-prod-p01.wcfb.p1.openshiftapps.com"
+                ]
+              }
+            },
+            "invocation_policy": {
+              "default": "allow"
+            }
+          }
+        }
+      },
+      "kind": {
+        "executable": "/opt/homebrew/bin/kind",
+        "from": {
+          "session": {
+            "sandbox": {
+              "fs_read": [
+                "$HOME/.kube",
+                "/tmp"
+              ],
+              "fs_write": [
+                "$HOME/.kube",
+                "/tmp"
+              ],
+              "network": {
+                "allow_domain": [
+                  "kind.sigs.k8s.io",
+                  "registry-1.docker.io",
+                  "gcr.io",
+                  "ghcr.io"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
