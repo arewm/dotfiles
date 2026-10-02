@@ -26,9 +26,7 @@ if [[ -L "${GOOSE_LINK}" ]]; then
     mv "${GOOSE_LINK}.tmp" "${GOOSE_LINK}"
 fi
 mkdir -p "${GOOSE_LINK}"
-rsync -rlv "${GOOSE_SRC}/config.yaml" "${GOOSE_LINK}/config.yaml"
-rsync -rlv "${GOOSE_SRC}/permissions.yaml" "${GOOSE_LINK}/permissions.yaml"
-rsync -rlv "${GOOSE_SRC}/recipes/" "${GOOSE_LINK}/recipes/"
+rsync -rlv "${GOOSE_SRC}/" "${GOOSE_LINK}/"
 # Strip com.apple.provenance so goose can write freely
 find "${GOOSE_LINK}" \( -type f -o -type d \) | while read -r f; do
     xattr -d com.apple.provenance "$f" 2>/dev/null || true
