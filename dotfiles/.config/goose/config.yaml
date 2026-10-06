@@ -4,6 +4,16 @@ GOOSE_CLI_SHOW_THINKING: 1
 GOOSE_PROMPT_EDITOR: vim
 GOOSE_PROMPT_EDITOR_ALWAYS: false
 active_provider: openai
+GOOSE_REVIEWER_POOL:
+  - name: anthropic-review
+    provider: anthropic
+    model: claude-opus-4-8
+  - name: openai-review
+    provider: openai
+    model: gpt-6.1-sol
+  - name: vertex-flash-review
+    provider: gcp_vertex_ai
+    model: gemini-3.8-flash
 providers:
   openai:
     enabled: true
