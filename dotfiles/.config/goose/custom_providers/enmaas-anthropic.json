@@ -1,0 +1,17 @@
+{
+  "name": "enmaas-anthropic",
+  "engine": "anthropic",
+  "display_name": "EnMaaS (Anthropic Messages)",
+  "description": "Red Hat EnMaaS Anthropic Messages API; dynamically discovers published models and pins hosted GLM 5.3.",
+  "api_key_env": "ENMAAS_KEY",
+  "base_url": "https://api.enmaas.devshift.net",
+  "models": [
+    {
+      "name": "rits/zai-org/glm-5-3",
+      "context_limit": 262144
+    }
+  ],
+  "dynamic_models": true,
+  "supports_streaming": true,
+  "requires_auth": true
+}

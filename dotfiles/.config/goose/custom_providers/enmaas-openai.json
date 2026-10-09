@@ -1,0 +1,12 @@
+{
+  "name": "enmaas-openai",
+  "engine": "openai",
+  "display_name": "EnMaaS (OpenAI compatible)",
+  "description": "Red Hat EnMaaS OpenAI-compatible API; dynamically discovers published models.",
+  "api_key_env": "ENMAAS_KEY",
+  "base_url": "https://api.enmaas.devshift.net/v1/chat/completions",
+  "models": [],
+  "dynamic_models": true,
+  "supports_streaming": true,
+  "requires_auth": true
+}

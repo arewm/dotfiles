@@ -80,6 +80,7 @@ devaipod-start() {
 #   rhtgoose-flash-bare   unsandboxed session (gemini-2.5-flash-lite)
 #   rhtagoose             sandboxed session  (claude-sonnet-5)
 #   rhtagoose-bare        unsandboxed session (claude-sonnet-5)
+#   rhtgoose-glm          unsandboxed EnMaaS session (GLM 5.3)
 #   rhogoose              sandboxed session  (openai: gpt-5.6-luna / planner: gpt-5.6-terra)
 #   rhogoose-bare         unsandboxed session (openai: gpt-5.6-luna / planner: gpt-5.6-terra)
 #   rhtgoose-local        sandboxed KinD session  (nono: goose-local)
@@ -239,6 +240,13 @@ rhtagoose() {
 
 rhtagoose-bare() {
   _rhtgoose_anthropic_env _goose_run -- goose "$@"
+}
+
+# EnMaaS hosted GLM 5.3 (requires ENMAAS_KEY in the environment).
+rhtgoose-glm() {
+  GOOSE_PROVIDER="enmaas-anthropic" \
+  GOOSE_MODEL="rits/zai-org/glm-5-3" \
+  _goose_run -- goose "$@"
 }
 
 rhogoose() {
