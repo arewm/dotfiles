@@ -1,6 +1,6 @@
 ---
 name: write-commit-message
-description: Write a conventional commit message by articulating the user's intent explicitly, then using a Luna (gpt-6-luna) subagent to format it cleanly. Use immediately before any git commit.
+description: Write a conventional commit message by articulating the user's intent explicitly, then using a GLM 5.3 subagent to format it cleanly. Use immediately before any git commit.
 ---
 
 # Write Commit Message
@@ -49,17 +49,17 @@ If nothing is staged:
 git log -1 --stat && echo "---" && git show HEAD
 ```
 
-## Step 3: Spawn Luna Subagent
+## Step 3: Spawn GLM 5.3 Subagent
 
 ### Calling Model & Tool Identification Hints:
-Before spawning Luna, determine:
+Before spawning the GLM 5.3 subagent, determine:
 - The **tool** being used (e.g. `goose`, `Claude Code`)
-- The **calling model** identity (e.g. `gemini-3.8-flash`, `gpt-6-luna`, `claude-sonnet-5`, `Sonnet 4.6`)
+- The **calling model** identity (e.g. `gemini-3.8-flash`, `glm-5-3`, `claude-sonnet-5`, `Sonnet 4.6`)
 
 **Hints for Goose to identify its current model accurately:**
 Do not guess or rely on training data assumptions. Check in this exact priority order:
 1. **Check Environment Variable first:** Run `echo "$GOOSE_MODEL"` via shell.
-   If set (e.g. `gemini-3.8-flash`, `gpt-6-luna`, `claude-sonnet-5`), use that value directly!
+   If set (e.g. `gemini-3.8-flash`, `glm-5-3`, `claude-sonnet-5`), use that value directly!
 2. **Check Goose Session DB:** If `$GOOSE_MODEL` is empty or unset, query the latest active session from SQLite:
    ```bash
    sqlite3 ~/.local/share/goose/sessions/sessions.db "SELECT json_extract(model_config_json, '$.model_name') FROM sessions ORDER BY updated_at DESC LIMIT 1;" 2>/dev/null
@@ -70,10 +70,10 @@ Do not guess or rely on training data assumptions. Check in this exact priority 
    ```
 4. **For Claude Code / Other Assistants:** Check session context or environment variables (e.g. `CLAUDE_MODEL`, `Sonnet 4.6`, `Opus 4.5`).
 
-Substitute both into the `Assisted-by` placeholder: `TOOL (MODEL)` — e.g. `goose (gemini-3.8-flash)` or `goose (gpt-6-luna)`. Do **not** pass the placeholder literally.
+Substitute both into the `Assisted-by` placeholder: `TOOL (MODEL)` — e.g. `goose (gemini-3.8-flash)` or `goose (glm-5-3)`. Do **not** pass the placeholder literally.
 
-### Delegate to Luna:
-Use `delegate(instructions: "...", model: "gpt-6-luna", provider: "openai")`. (In Claude Code, use the Agent tool). Pass this prompt verbatim, filling in the placeholders:
+### Delegate to GLM 5.3:
+Use `delegate(instructions: "...", model: "rits/zai-org/glm-5-3", provider: "enmaas-anthropic")`. (In Claude Code, use the Agent tool). Pass this prompt verbatim, filling in the placeholders:
 
 ---
 
@@ -89,7 +89,7 @@ Write a git commit message. Return ONLY the commit message text — no explanati
 Assisted-by: TOOL (MODEL)
 ```
 
-Where `TOOL (MODEL)` is filled in by the caller — e.g. `goose (gemini-3.8-flash)`, `goose (gpt-6-luna)`, or `Claude Code (Opus 4.5)`. Use exactly the value provided; do not substitute your own tool name.
+Where `TOOL (MODEL)` is filled in by the caller — e.g. `goose (gemini-3.8-flash)`, `goose (glm-5-3)`, or `Claude Code (Opus 4.5)`. Use exactly the value provided; do not substitute your own tool name.
 
 **Rules:**
 - Title: `scope: Verb description` — imperative mood, under 72 chars, no trailing period
@@ -151,3 +151,5 @@ EOF
 ```
 
 Do not paraphrase or reformat the returned message. If it looks wrong, re-run Step 3 with better intent context — don't edit the output by hand.
+
+**Never GPG-sign manually.** Do not pass `-S`/`--gpg-sign` to `git commit`, and do not invoke `gpg` to sign anything yourself. Signing is owned exclusively by the user's gitconfig — the `commit.gpgsign` and `includeIf` directives verified in Step 0 sign automatically where appropriate. Forcing a signature can select the wrong key, bypass the per-forge identity rules, or fail outright in environments without a signing key.
