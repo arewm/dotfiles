@@ -54,12 +54,12 @@ git log -1 --stat && echo "---" && git show HEAD
 ### Calling Model & Tool Identification Hints:
 Before spawning the GLM 5.3 subagent, determine:
 - The **tool** being used (e.g. `goose`, `Claude Code`)
-- The **calling model** identity (e.g. `gemini-3.8-flash`, `glm-5-3`, `claude-sonnet-5`, `Sonnet 4.6`)
+- The **calling model** identity (e.g. `gemini-3.8-flash`, `gpt-6-luna`, `glm-5-3`, `Sonnet 4.6`)
 
 **Hints for Goose to identify its current model accurately:**
 Do not guess or rely on training data assumptions. Check in this exact priority order:
 1. **Check Environment Variable first:** Run `echo "$GOOSE_MODEL"` via shell.
-   If set (e.g. `gemini-3.8-flash`, `glm-5-3`, `claude-sonnet-5`), use that value directly!
+   If set (e.g. `gemini-3.8-flash`, `gpt-6-luna`, `glm-5-3`), use that value — distilled first if it is a routed ID (see below)!
 2. **Check Goose Session DB:** If `$GOOSE_MODEL` is empty or unset, query the latest active session from SQLite:
    ```bash
    sqlite3 ~/.local/share/goose/sessions/sessions.db "SELECT json_extract(model_config_json, '$.model_name') FROM sessions ORDER BY updated_at DESC LIMIT 1;" 2>/dev/null
@@ -70,7 +70,9 @@ Do not guess or rely on training data assumptions. Check in this exact priority 
    ```
 4. **For Claude Code / Other Assistants:** Check session context or environment variables (e.g. `CLAUDE_MODEL`, `Sonnet 4.6`, `Opus 4.5`).
 
-Substitute both into the `Assisted-by` placeholder: `TOOL (MODEL)` — e.g. `goose (gemini-3.8-flash)` or `goose (glm-5-3)`. Do **not** pass the placeholder literally.
+**Distill routed model IDs before use:** Configured values are often full routing configurations, not bare model names — e.g. `GOOSE_MODEL` may be `rits/zai-org/glm-5-3` (provider/org/model). For the `Assisted-by` trailer, use only the final path segment: `rits/zai-org/glm-5-3` → `glm-5-3`, `openai/gpt-6-luna` → `gpt-6-luna`. Never report the full routing configuration as the model identity.
+
+Substitute both into the `Assisted-by` placeholder: `TOOL (MODEL)` — e.g. `goose (gemini-3.8-flash)`, `goose (gpt-6-luna)`, or `goose (glm-5-3)`. Do **not** pass the placeholder literally.
 
 ### Delegate to GLM 5.3:
 Use `delegate(instructions: "...", model: "rits/zai-org/glm-5-3", provider: "enmaas-anthropic")`. (In Claude Code, use the Agent tool). Pass this prompt verbatim, filling in the placeholders:
@@ -89,7 +91,7 @@ Write a git commit message. Return ONLY the commit message text — no explanati
 Assisted-by: TOOL (MODEL)
 ```
 
-Where `TOOL (MODEL)` is filled in by the caller — e.g. `goose (gemini-3.8-flash)`, `goose (glm-5-3)`, or `Claude Code (Opus 4.5)`. Use exactly the value provided; do not substitute your own tool name.
+Where `TOOL (MODEL)` is filled in by the caller — e.g. `goose (gemini-3.8-flash)`, `goose (gpt-6-luna)`, or `Claude Code (Opus 4.5)`. Use exactly the value provided; do not substitute your own tool name.
 
 **Rules:**
 - Title: `scope: Verb description` — imperative mood, under 72 chars, no trailing period
