@@ -1,0 +1,17 @@
+# Output width and tables
+
+- My terminal renders about 120 columns. Keep all output — tables, code
+  blocks, ASCII diagrams — no wider than 120 characters.
+
+- In chat responses, default to ASCII tables inside fenced code blocks
+  (plain +---+ style, plain ASCII characters). ASCII tables delimit rows
+  with separator lines, so cell content can wrap across multiple lines and
+  the table stays within the width limit.
+
+- Use markdown pipe tables in chat only when I explicitly ask for one.
+  Pipe-table rows are single lines and cannot wrap, so keep their cells
+  terse and move detail to bullets below the table.
+
+- When writing markdown files (vault notes, docs, MR descriptions), use
+  normal markdown pipe tables with terse cells — those render as real
+  tables in Obsidian/GitLab — unless I ask for ASCII there too.
