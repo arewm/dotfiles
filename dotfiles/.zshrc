@@ -12,6 +12,12 @@ export REGISTRY_AUTH_FILE=~/.docker/config.json
 # Ensure that gpg is configured properly
 export GPG_TTY=$(tty)
 
+# Extra working directories that goose delegates may run in. Honored only
+# for interactive terminal launches (goose refuses it headless/nested), so
+# exporting unconditionally is safe. Lets subagents work on worktrees that
+# must live under ~/workspace/worktrees for gitconfig includeIf to apply.
+export GOOSE_EXTRA_WORKDIRS="$HOME/workspace/worktrees"
+
 # Configure homebrew
 export HOMEBREW_NO_ANALYTICS=1
 eval "$(/opt/homebrew/bin/brew shellenv)"
