@@ -78,9 +78,10 @@ devaipod-start() {
 #   rhtgoose-bare         unsandboxed session
 #   rhtgoose-flash        sandboxed session  (gemini-2.5-flash-lite)
 #   rhtgoose-flash-bare   unsandboxed session (gemini-2.5-flash-lite)
+#   rhtgoose-glm          unsandboxed EnMaaS session  (GLM 5.3, low effort)
+#   rhtgoose-glm-high     unsandboxed EnMaaS session  (GLM 5.3, high effort)
 #   rhtagoose             sandboxed session  (claude-sonnet-5)
 #   rhtagoose-bare        unsandboxed session (claude-sonnet-5)
-#   rhtgoose-glm          unsandboxed EnMaaS session (GLM 5.3)
 #   rhogoose              sandboxed session  (openai: gpt-5.6-luna / planner: gpt-5.6-terra)
 #   rhogoose-bare         unsandboxed session (openai: gpt-5.6-luna / planner: gpt-5.6-terra)
 #   rhtgoose-local        sandboxed KinD session  (nono: goose-local)
@@ -167,7 +168,7 @@ _rhtgoose_anthropic_env() {
 # OpenAI helper env:
 _rhtgoose_openai_env() {
   GOOSE_PROVIDER="openai" \
-  GOOSE_MODEL="gpt-5.6-terra" \
+  GOOSE_MODEL="gpt-6.1-sol" \
   GOOSE_PLANNER_PROVIDER="openai" \
   GOOSE_PLANNER_MODEL="gpt-5.6-terra" \
   GIT_TERMINAL_PROMPT=0 \
@@ -176,7 +177,7 @@ _rhtgoose_openai_env() {
 
 _rhtgoose_openai_luna_env() {
   GOOSE_PROVIDER="openai" \
-  GOOSE_MODEL="gpt-5.6-luna" \
+  GOOSE_MODEL="gpt-6-luna" \
   GOOSE_PLANNER_PROVIDER="openai" \
   GOOSE_PLANNER_MODEL="gpt-5.6-luna" \
   GIT_TERMINAL_PROMPT=0 \
@@ -243,9 +244,17 @@ rhtagoose-bare() {
 }
 
 # EnMaaS hosted GLM 5.3 (requires ENMAAS_KEY in the environment).
+# Low thinking effort by default for fast feedback; rhtgoose-glm-high for deep
+# reasoning. Mid-session: /model glm-5-3-{low,high,max} on the enmaas-glm provider.
 rhtgoose-glm() {
-  GOOSE_PROVIDER="enmaas-anthropic" \
-  GOOSE_MODEL="rits/zai-org/glm-5-3" \
+  GOOSE_PROVIDER="enmaas-glm" \
+  GOOSE_MODEL="glm-5-3-low" \
+  _goose_run -- goose "$@"
+}
+
+rhtgoose-glm-high() {
+  GOOSE_PROVIDER="enmaas-glm" \
+  GOOSE_MODEL="glm-5-3-high" \
   _goose_run -- goose "$@"
 }
 

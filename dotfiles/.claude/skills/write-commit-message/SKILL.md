@@ -75,7 +75,7 @@ Do not guess or rely on training data assumptions. Check in this exact priority 
 Substitute both into the `Assisted-by` placeholder: `TOOL (MODEL)` — e.g. `goose (gemini-3.8-flash)`, `goose (gpt-6-luna)`, or `goose (glm-5-3)`. Do **not** pass the placeholder literally.
 
 ### Delegate to GLM 5.3:
-Use `delegate(instructions: "...", model: "rits/zai-org/glm-5-3", provider: "enmaas-anthropic")`. (In Claude Code, use the Agent tool). Pass this prompt verbatim, filling in the placeholders:
+Use `delegate(instructions: "...", model: "glm-5-3-low", provider: "enmaas-glm")`. (In Claude Code, use the Agent tool). Pass this prompt verbatim, filling in the placeholders:
 
 ---
 
@@ -146,7 +146,7 @@ Diff:
 Use the returned message verbatim:
 
 ```bash
-git commit -m "$(cat <<'EOF'
+git commit --no-gpg-sign -m "$(cat <<'EOF'
 <message from subagent>
 EOF
 )"
@@ -154,4 +154,4 @@ EOF
 
 Do not paraphrase or reformat the returned message. If it looks wrong, re-run Step 3 with better intent context — don't edit the output by hand.
 
-**Never GPG-sign manually.** Do not pass `-S`/`--gpg-sign` to `git commit`, and do not invoke `gpg` to sign anything yourself. Signing is owned exclusively by the user's gitconfig — the `commit.gpgsign` and `includeIf` directives verified in Step 0 sign automatically where appropriate. Forcing a signature can select the wrong key, bypass the per-forge identity rules, or fail outright in environments without a signing key.
+**Never sign or provide the user's signoff.** Do not pass `-S`/`--gpg-sign` to `git commit`, and do not invoke `gpg` to sign anything yourself. Commit unsigned even when the user's gitconfig has `commit.gpgsign` enabled — always pass `--no-gpg-sign` to override it. Do not add a `Signed-off-by:` line and do not pass `-s`/`--signoff` to `git commit`. Signing and providing the signoff are for the user to do themselves after reviewing the commit (e.g., via `git commit --amend`).
