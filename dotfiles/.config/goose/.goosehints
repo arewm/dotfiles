@@ -6,7 +6,7 @@
 - In chat responses, default to ASCII tables inside fenced code blocks
   (plain +---+ style, plain ASCII characters). ASCII tables delimit rows
   with separator lines, so cell content can wrap across multiple lines and
-  the table stays within the width limit.
+  the table stays within the width limit. make sure to separate rows!
 
 - Use markdown pipe tables in chat only when I explicitly ask for one.
   Pipe-table rows are single lines and cannot wrap, so keep their cells
