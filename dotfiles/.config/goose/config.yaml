@@ -3,30 +3,6 @@ GOOSE_CLI_THEME: dark
 GOOSE_CLI_SHOW_THINKING: 1
 GOOSE_PROMPT_EDITOR: vim
 GOOSE_PROMPT_EDITOR_ALWAYS: false
-active_provider: enmaas-anthropic
-GOOSE_REVIEWER_POOL:
-  - name: anthropic-review
-    provider: anthropic
-    model: claude-opus-4-8
-  - name: openai-review
-    provider: openai
-    model: gpt-6.1-sol
-  - name: vertex-flash-review
-    provider: gcp_vertex_ai
-    model: gemini-3.8-flash
-providers:
-  enmaas-anthropic:
-    enabled: true
-    model: glm-5-3-low
-    configured: true
-  openai:
-    enabled: true
-    model: gpt-6-luna
-    configured: true
-  gcp_vertex_ai:
-    enabled: true
-    model: gemini-3.8-flash
-    configured: true
 extensions:
   developer:
     enabled: true
@@ -40,8 +16,7 @@ extensions:
     enabled: true
     type: platform
     name: analyze
-    description: 'Analyze code structure with tree-sitter: directory overviews, file
-      details, symbol call graphs'
+    description: 'Analyze code structure with tree-sitter: directory overviews, file details, symbol call graphs'
     display_name: Analyze
     bundled: true
   summon:
@@ -64,8 +39,7 @@ extensions:
     enabled: true
     type: platform
     name: Extension Manager
-    description: Enable extension management tools for discovering, enabling, and
-      disabling extensions
+    description: Enable extension management tools for discovering, enabling, and disabling extensions
     display_name: Extension Manager
     bundled: true
     available_tools: []
@@ -73,24 +47,21 @@ extensions:
     enabled: false
     type: platform
     name: orchestrator
-    description: 'Manage agent sessions: list, view, start, send messages, interrupt,
-      and stop agents'
+    description: 'Manage agent sessions: list, view, start, send messages, interrupt, and stop agents'
     display_name: Orchestrator
     bundled: true
   apps:
     enabled: true
     type: platform
     name: apps
-    description: Create and manage custom Goose apps through chat. Apps are HTML/CSS/JavaScript
-      and run in sandboxed windows.
+    description: Create and manage custom Goose apps through chat. Apps are HTML/CSS/JavaScript and run in sandboxed windows.
     display_name: Apps
     bundled: true
   chatrecall:
     enabled: false
     type: platform
     name: chatrecall
-    description: Search past conversations and load session summaries for contextual
-      memory
+    description: Search past conversations and load session summaries for contextual memory
     display_name: Chat Recall
     bundled: true
   todo:
@@ -118,7 +89,65 @@ extensions:
     enabled: true
     type: platform
     name: tom
-    description: Inject custom context into every turn via GOOSE_MOIM_MESSAGE_TEXT
-      and GOOSE_MOIM_MESSAGE_FILE environment variables
+    description: Inject custom context into every turn via GOOSE_MOIM_MESSAGE_TEXT and GOOSE_MOIM_MESSAGE_FILE environment variables
     display_name: Top Of Mind
     bundled: true
+  code_execution:
+    enabled: false
+    type: platform
+    name: code_execution
+    description: Goose will make extension calls through code execution, saving tokens
+    display_name: Code Mode
+    bundled: true
+  computercontroller:
+    enabled: false
+    type: builtin
+    name: computercontroller
+    description: General computer control tools that don't require you to be a developer or engineer.
+    display_name: Computer Controller
+    timeout: 300
+    bundled: true
+  autovisualiser:
+    enabled: false
+    type: builtin
+    name: autovisualiser
+    description: Data visualization and UI generation tools
+    display_name: Auto Visualiser
+    timeout: 300
+    bundled: true
+  memory:
+    enabled: false
+    type: builtin
+    name: memory
+    description: Teach goose your preferences as you go.
+    display_name: Memory
+    timeout: 300
+    bundled: true
+  tutorial:
+    enabled: false
+    type: builtin
+    name: tutorial
+    description: Access interactive tutorials and guides
+    display_name: Tutorial
+    timeout: 300
+    bundled: true
+GOOSE_REVIEWER_POOL:
+- name: anthropic-review
+  provider: enmaas-anthropic
+  model: glm-5-3-high
+- name: openai-review
+  provider: enmaas-openai
+  model: gpt-6-luna
+- name: flash-review
+  provider: enmaas-openai
+  model: gemini-3.8-flash
+providers:
+  enmaas-anthropic:
+    enabled: true
+    model: glm-5-3-low
+    configured: true
+  enmaas-openai:
+    enabled: true
+    model: gpt-6-luna
+    configured: true
+active_provider: enmaas-anthropic

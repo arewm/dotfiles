@@ -11,7 +11,7 @@ parameters:
 
 settings:
   goose_provider: gcp_vertex_ai
-  goose_model: gemini-3.8-flash
+  goose_model: claude-sonnet-4-6
   temperature: 0.4
   max_turns: 80
 
