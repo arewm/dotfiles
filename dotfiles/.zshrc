@@ -251,16 +251,18 @@ rhtagoose-bare() {
 
 # EnMaaS hosted GLM 5.3 (requires ENMAAS_KEY in the environment).
 # Low thinking effort by default for fast feedback; rhtgoose-glm-high for deep
-# reasoning. Mid-session: /model glm-5-3-{low,high,max} on the enmaas-anthropic provider.
+# reasoning. Mid-session: /model --effort {low,medium,high,max} (or xhigh=max).
 rhtgoose-glm() {
   GOOSE_PROVIDER="enmaas-anthropic" \
-  GOOSE_MODEL="glm-5-3-low" \
+  GOOSE_MODEL="rits/zai-org/glm-5-3" \
+  GOOSE_THINKING_EFFORT="low" \
   _goose_run -- goose "$@"
 }
 
 rhtgoose-glm-high() {
   GOOSE_PROVIDER="enmaas-anthropic" \
-  GOOSE_MODEL="glm-5-3-high" \
+  GOOSE_MODEL="rits/zai-org/glm-5-3" \
+  GOOSE_THINKING_EFFORT="high" \
   _goose_run -- goose "$@"
 }
 

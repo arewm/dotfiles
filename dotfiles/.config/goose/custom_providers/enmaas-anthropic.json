@@ -10,33 +10,6 @@
       "name": "rits/zai-org/glm-5-3",
       "context_limit": 1048576,
       "auto_compact_token_limit": 800000
-    },
-    {
-      "name": "glm-5-3-low",
-      "resolved_model": "rits/zai-org/glm-5-3",
-      "context_limit": 1048576,
-      "auto_compact_token_limit": 800000,
-      "request_params": {
-        "reasoning_effort": "low"
-      }
-    },
-    {
-      "name": "glm-5-3-high",
-      "resolved_model": "rits/zai-org/glm-5-3",
-      "context_limit": 1048576,
-      "auto_compact_token_limit": 800000,
-      "request_params": {
-        "reasoning_effort": "high"
-      }
-    },
-    {
-      "name": "glm-5-3-max",
-      "resolved_model": "rits/zai-org/glm-5-3",
-      "context_limit": 1048576,
-      "auto_compact_token_limit": 800000,
-      "request_params": {
-        "reasoning_effort": "max"
-      }
     }
   ],
   "dynamic_models": true,
