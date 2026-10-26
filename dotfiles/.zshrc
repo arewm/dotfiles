@@ -472,3 +472,11 @@ source ~/.env_personal
 
 # Always get a new kubeconfig
 $(kubectl-new-env)
+
+# Python (requests) CA bundle: certifi + Red Hat Internal Root CA, so tools like
+# the pulp CLI can reach packages.redhat.com. Regenerate via
+# ~/.config/pulp/regen-ca-bundle.sh after pulp-cli upgrades.
+export REQUESTS_CA_BUNDLE="$HOME/.config/pulp/ca-bundle.pem"
+
+# Personal scripts (pulp-curl etc.)
+export PATH="$HOME/bin:$PATH"
